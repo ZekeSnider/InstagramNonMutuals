@@ -16,7 +16,7 @@ CLOSE_BUTTON = "//button[contains(text(),'Close')]"
 driver = webdriver.Chrome()
 driver.get("https://www.instagram.com/" + config["username"] + "/following/")
 
-def getList():
+def getList(include_verified):
 	while 1:
 		if len(driver.find_elements_by_xpath(MODAL_ELEMENT)) == 4:
 			break
@@ -41,9 +41,12 @@ def getList():
 	followers = []
 	for item in list:
 		person = item.find_element_by_css_selector("div:first-child div:first-child div:first-child div:first-child div:first-child a").get_attribute("href")
-		person = person.replace("https://www.instagram.com/", "")
-		person = person.replace("/", "")
-		followers.append(person)
+		verified = item.find_elements_by_class_name("coreSpriteVerifiedBadge")
+
+		if len(verified) == 0 or include_verified:
+			person = person.replace("https://www.instagram.com/", "")
+			person = person.replace("/", "")
+			followers.append(person)
 
 	print(followers)
 	return followers
@@ -74,13 +77,13 @@ while 1:
 
 followersButton = driver.find_element_by_css_selector(FOLLOWERS_LINK)
 followersButton.click()
-followerList = getList()
+followerList = getList(config["includeVerified"])
 
 closeModule()
 
 followingButton = driver.find_element_by_css_selector(FOLLOWING_LINK)
 followingButton.click()
-followingList = getList()
+followingList = getList(config["includeVerified"])
 
 driver.close()
 
