@@ -7,19 +7,30 @@ import json
 with open('config.json') as config_file:
 	config = json.load(config_file)
 
+MODAL_ELEMENT = "//li/../../.."
+MODAL_SUBELEMENT = "//li/.."
+FOLLOWERS_LINK = 'a[href="/' + config["username"] + '/followers/"]'
+FOLLOWING_LINK = 'a[href="/' + config["username"] + '/following/"]'
+CLOSE_BUTTON = "//button[contains(text(),'Close')]"
+
 driver = webdriver.Chrome()
 driver.get("https://www.instagram.com/" + config["username"] + "/following/")
 
 def getList():
-	time.sleep(2)
-	scroll_div = driver.find_elements_by_xpath("//li/../../..")[3]
-	parent_div = driver.find_elements_by_xpath("//li/..")[3]
+	while 1:
+		if len(driver.find_elements_by_xpath(MODAL_ELEMENT)) == 4:
+			break
+		else:
+			time.sleep(0.2)
+	scroll_div = driver.find_elements_by_xpath(MODAL_ELEMENT)[3]
+	parent_div = driver.find_elements_by_xpath(MODAL_SUBELEMENT)[3]
 
 	list = None
 	last_length = 0
 	diff = 1
 
-	scroll_id = scroll_div.get_attribute("class")
+	# Keep scrolling to bottom of the div while the number of entries is increasing
+	# (loading from the server, haven't reached the end yet)
 	while diff!=0:
 		driver.execute_script('arguments[0].scrollTop = arguments[0].scrollHeight', scroll_div)
 	 	list = parent_div.find_elements_by_tag_name("li")
@@ -39,7 +50,7 @@ def getList():
 	
 
 def closeModule():
-	driver.find_element_by_xpath("//button[contains(text(),'Close')]").click()
+	driver.find_element_by_xpath(CLOSE_BUTTON).click()
 
 
 inputFields = driver.find_elements_by_tag_name('input')
@@ -49,22 +60,25 @@ inputFields[1].send_keys(config["password"])
 
 inputFields[1].send_keys(Keys.ENTER)
 
-#confirmation_code = raw_input("Enter the SMS verification code: ")
-#inputFields = driver.find_elements_by_tag_name('input')
-##inputFields[0].send_keys(confirmation_code)
-#inputFields[0].send_keys(Keys.ENTER)
+if config["2factorEnabled"]:
+	confirmation_code = raw_input("Enter the SMS verification code: ")
+	inputFields = driver.find_elements_by_tag_name('input')
+	inputFields[0].send_keys(confirmation_code)
+	inputFields[0].send_keys(Keys.ENTER)
 
+while 1:
+	if len(driver.find_elements_by_css_selector(FOLLOWERS_LINK)) == 1:
+		break
+	else:
+		time.sleep(0.2)
 
-#driver.explicity_wait(3)
-time.sleep(2)
-
-followersButton = driver.find_element_by_css_selector('a[href="/' + config["username"] + '/followers/"]')
+followersButton = driver.find_element_by_css_selector(FOLLOWERS_LINK)
 followersButton.click()
 followerList = getList()
 
 closeModule()
 
-followingButton = driver.find_element_by_css_selector('a[href="/' + config["username"] + '/following/"]')
+followingButton = driver.find_element_by_css_selector(FOLLOWING_LINK)
 followingButton.click()
 followingList = getList()
 
