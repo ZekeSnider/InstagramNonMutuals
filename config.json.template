@@ -1,0 +1,6 @@
+{
+	"username": "username",
+	"email": "user@domain.com",
+	"password": "password",
+	"2factorEnabled": false
+}
