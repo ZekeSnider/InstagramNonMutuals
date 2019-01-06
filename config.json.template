@@ -3,5 +3,7 @@
 	"email": "user@domain.com",
 	"password": "password",
 	"2factorEnabled": false,
+	"OTPEnabled": false,
+	"OTPHash": "",
 	"includeVerified": false
 }

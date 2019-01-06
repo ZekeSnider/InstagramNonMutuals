@@ -13,4 +13,6 @@ This is a script that scrapes Instagram using Chrome Driver and Selenium to dete
 + You must copy the file `config.json.template` to `config.json`, and fill in the configuration details. The `includeVerified` option allows you to optionally hide all verified accounts from the lists.
 
 ### Running
-Use `python followers.py`. If you have 2 factor enabled, you will be prompted for the SMS code. The resulting files are saved to `followers.json`, `following.json`, and `nonmutual.json`.
+Use `python followers.py`. If you have 2 factor enabled, you will be prompted for the verification code, or if you use TOTP, you can configure the `OTPHash` in `config.json`.
+
+The resulting files are saved to `followers.json`, `following.json`, and `nonmutual.json`.
