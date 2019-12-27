@@ -12,19 +12,19 @@ MODAL_ELEMENT = "//li/../../.."
 MODAL_SUBELEMENT = "//li/.."
 FOLLOWERS_LINK = 'a[href="/' + config["username"] + '/followers/"]'
 FOLLOWING_LINK = 'a[href="/' + config["username"] + '/following/"]'
-CLOSE_BUTTON = "/html/body/div[3]/div/div/div[1]/div/div[2]/button"
+CLOSE_BUTTON = "/html/body/div[4]/div/div/div[1]/div[2]/button"
 
 driver = webdriver.Chrome()
 driver.get("https://www.instagram.com/" + config["username"] + "/following/")
 
 def get_list(include_verified):
 	while 1:
-		if len(driver.find_elements_by_xpath(MODAL_ELEMENT)) == 4:
+		if len(driver.find_elements_by_xpath(MODAL_ELEMENT)) == 3:
 			break
 		else:
 			time.sleep(0.2)
-	scroll_div = driver.find_elements_by_xpath(MODAL_ELEMENT)[3]
-	parent_div = driver.find_elements_by_xpath(MODAL_SUBELEMENT)[3]
+	scroll_div = driver.find_elements_by_xpath(MODAL_ELEMENT)[2]
+	parent_div = driver.find_elements_by_xpath(MODAL_SUBELEMENT)[2]
 
 	list = None
 	last_length = 0
@@ -39,9 +39,9 @@ def get_list(include_verified):
 		driver.execute_script('arguments[0].scrollTop = arguments[0].scrollHeight', scroll_div)
 		time.sleep(1)
 
-	 	list = parent_div.find_elements_by_tag_name("li")
-	 	diff = len(list) - last_length
-	 	last_length = len(list)
+		list = parent_div.find_elements_by_tag_name("li")
+		diff = len(list) - last_length
+		last_length = len(list)
 
 
 	followers = []
@@ -62,12 +62,14 @@ def closeModule():
 	driver.find_element_by_xpath(CLOSE_BUTTON).click()
 
 
+time.sleep(2)
 input_fields = driver.find_elements_by_tag_name('input')
 
 input_fields[0].send_keys(config["email"])
 input_fields[1].send_keys(config["password"])
 
 input_fields[1].send_keys(Keys.ENTER)
+time.sleep(2)
 
 if config["2factorEnabled"] or (config["OTPEnabled"] and config["OTPHash"] == ""):
 	confirmation_code = raw_input("Enter the SMS/OTP verification code: ")
@@ -108,4 +110,4 @@ with open('following.json', 'w') as follow_file, open('followers.json', 'w') as 
 
 print("Follower information written to files.")
 
-print("The following accounts are non-mutual follows: " + unicode(non_mutual_follows))
+print("The following accounts are non-mutual follows: " + str(non_mutual_follows))

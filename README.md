@@ -7,7 +7,7 @@ This is a script that scrapes Instagram using Chrome Driver and Selenium to dete
 
 ### Prerequisites
 
-+ You must have Python 2.x installed.
++ You must have Python 3.x installed.
 + You must have chrome driver installed. On macOS, you can install simply via `brew cask install chromedriver`
 + You must have selenium installed. `pip install selenium` or `pip install -r requirements.txt`
 + You must copy the file `config.json.template` to `config.json`, and fill in the configuration details. The `includeVerified` option allows you to optionally hide all verified accounts from the lists.
